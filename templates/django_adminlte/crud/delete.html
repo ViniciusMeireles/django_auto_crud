@@ -1,0 +1,30 @@
+{% extends template_form_base %}
+
+{% block extra_head %}
+{% endblock extra_head %}
+
+{% block form_title %}
+  {{ delete_card_title | default:'Delete' }}
+{% endblock form_title %}
+
+{% block form %}
+  <div class="card-body">
+    <p>{{ message_delete }}</p>
+  </div>
+  <!-- /.card-body -->
+  <div class="card-footer text-right">
+    <a id="backButton" class="btn btn-secondary" {% if back_url %}data-url="{{ back_url }}"{% endif %}>
+      <i class="fas fa-arrow-left"></i>
+      back
+    </a>
+    <button type="submit" class="btn btn-danger">
+      {% block submit_button_text %}
+        <i class="fas fa-trash"></i>
+        Delete
+      {% endblock submit_button_text %}
+    </button>
+  </div>
+{% endblock form %}
+
+{% block extra_scripts %}
+{% endblock extra_scripts %}

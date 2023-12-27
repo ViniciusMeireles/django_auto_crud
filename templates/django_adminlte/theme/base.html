@@ -1,0 +1,192 @@
+{% load django_adminlte_tags %}
+{% load static %}
+{% load tz %}
+<!DOCTYPE html>
+<html {% if page_lang %}
+        lang="{{ page_lang }}"
+      {% else %}
+        lang="{{ site_lang | default:"en" }}"
+      {% endif %}
+>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/png" href="{% static_favicon %}" sizes="32x32">
+
+  <title>
+    {% block title %}
+      {% if title %}
+        {{ title }}{% if site_title %} | {{ site_title }}{% endif %}
+      {% else %}
+        {{ site_title }}
+      {% endif %}
+    {% endblock title %}
+  </title>
+
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+  >
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static_theme 'plugins/fontawesome-free/css/all.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet"
+        href="{% static_theme 'dist/css/adminlte.min.css' %}"
+  >
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet"
+        href="{% static_theme 'plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}"
+  >
+  {% block extra_head %}
+  {% endblock extra_head %}
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Preloader -->
+  <div class="preloader flex-column justify-content-center align-items-center">
+    <img class="animation__shake"
+         src="{% static_logo %}"
+         {% if site_title %}
+            alt="{{ site_title }} Logo"
+         {% else %}
+            alt="Django AdminLTE Logo"
+          {% endif %}
+         height="60"
+         width="60"
+    >
+  </div>
+
+  {% include 'django_adminlte/theme/navbar.html' %}
+
+  <!-- Main Sidebar Container -->
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="{{ site_url }}"
+       class="brand-link"
+    >
+      <img src="{% static_logo %}"
+           {% if site_title %}
+             alt="{{ site_title }} Logo"
+           {% else %}
+             alt="Django AdminLTE Logo"
+           {% endif %}
+           class="brand-image img-circle elevation-3"
+           style="opacity: .8"
+      >
+      <span class="brand-text font-weight-light">
+        {% if site_title %}
+          {{ site_title }}
+        {% else %}
+          Django AdminLTE 3
+        {% endif %}
+      </span>
+    </a>
+
+    {% include 'django_adminlte/theme/sidebar.html' %}
+
+  </aside>
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+
+    {% include 'django_adminlte/theme/content_header.html' %}
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+          {% block messages %}
+            {% if messages %}
+              <div class="col-md-12">
+                {% for message in messages %}
+                  <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endblock messages %}
+        </div>
+        {% block content %}
+        {% endblock content %}
+        <!-- /.row (main row) -->
+      </div>
+      <!-- /.container-fluid -->
+
+      <!-- Modal -->
+      <div id="modal-base" class="modal fade">
+        <div id="modal-type" class="modal-dialog">
+          <div class="modal-content">
+            <div id="modal-overlay" class="overlay" hidden>
+                <i class="fas fa-2x fa-sync fa-spin"></i>
+            </div>
+            <div class="modal-header">
+              <h4 class="modal-title">
+                <div id="modal-title"></div>
+              </h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div id="modal-body"></div>
+            </div>
+            <div class="modal-footer justify-content-between">
+              <div id="modal-footer"></div>
+            </div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
+
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer class="main-footer">
+    <strong>
+      Copyright &copy; 2023-{% now "Y" %}
+      <a href="{{ site_url }}">
+        {{ site_link_text }}
+      </a>.
+    </strong>
+    All rights reserved.
+    <div class="float-right d-none d-sm-inline-block">
+      <b>Version</b> 3.2.0
+    </div>
+  </footer>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="{% static_theme 'plugins/jquery/jquery.min.js' %}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="{% static_theme 'plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+<!-- Bootstrap 4 -->
+<script src="{% static_theme 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- overlayScrollbars -->
+<script src="{% static_theme 'plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static_theme 'dist/js/adminlte.js' %}"></script>
+<!-- Django AdminLTE  -->
+<script src="{% static 'django_adminlte/js/django_adminlte.js' %}"></script>
+
+{% block extra_scripts %}
+{% endblock extra_scripts %}
+
+</body>
+</html>

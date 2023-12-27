@@ -1,0 +1,26 @@
+{% load static %}
+{% load django_adminlte_tags %}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">
+          {% block page_title %}
+            {{ page_title | default:"Django AdminLte" }}
+          {% endblock page_title %}
+        </h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          {% block breadcrumbs %}
+            {% if breadcrumbs %}
+              {% create_breadcrumbs breadcrumbs request.path %}
+            {% endif %}
+          {% endblock breadcrumbs %}
+        </ol>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->

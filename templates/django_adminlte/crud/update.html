@@ -1,0 +1,5 @@
+{% extends template_form_base %}
+{% block submit_button_text %}
+  <i class="fa fa-save"></i>
+  {{ submit_button_text | default:_('Update') }}
+{% endblock submit_button_text %}

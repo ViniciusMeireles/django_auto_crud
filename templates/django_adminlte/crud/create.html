@@ -1,0 +1,5 @@
+{% extends template_form_base %}
+{% block submit_button_text %}
+  <i class="fa fa-plus"></i>
+  {{ submit_button_text | default:_('Create') }}
+{% endblock submit_button_text %}

@@ -1,0 +1,179 @@
+{% extends template_base %}
+{% load static %}
+{% load django_adminlte_tags %}
+
+{% block extra_head %}
+  {{ block.super }}
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="{% static_theme 'plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css' %}">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="{% static_theme 'plugins/toastr/toastr.min.css' %}">
+{% endblock extra_head %}
+
+{% block content %}
+  <div class="row">
+    <!-- column -->
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">
+            {% block table_title %}
+              {{ table_title | default:'List' }}
+            {% endblock table_title %}
+          </h3>
+          <div class="card-tools">
+            {% block table_tools %}
+              {% if is_button_create or create_url %}
+                <a href="{{ create_url }}" class="btn btn-primary btn-sm">
+                  <i class="fas fa-plus"></i> Create
+                </a>
+              {% endif %}
+            {% endblock table_tools %}
+          </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body table-responsive">
+          <table class="table table-bordered table-striped table-head-fixed text-nowrap">
+            <thead>
+            <tr>
+              {% create_header_table model fields sort order actions %}
+            </tr>
+            </thead>
+            <tbody>
+              {% create_body_table object_list fields actions %}
+            </tbody>
+          </table>
+        </div>
+        <!-- /.card-body -->
+        {% if is_paginated %}
+          <div class="card-footer clearfix">
+            <div class="float-left">
+              <strong>
+                Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ paginator.count }} entries
+              </strong>
+            </div>
+            <ul class="pagination pagination-sm m-0 float-right">
+              {% if page_obj.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">«</a></li>
+              {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">«</a></li>
+              {% endif %}
+              {% for i in paginator.page_range %}
+                {% if page_obj.number == i %}
+                  <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+                {% else %}
+                  <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+              {% endfor %}
+              {% if page_obj.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">»</a></li>
+              {% else %}
+                <li class="page-item disabled"><a class="page-link" href="#">»</a></li>
+              {% endif %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+      <!-- /.card -->
+    </div>
+    <!--/.col -->
+  </div>
+{% endblock content %}
+
+{% block extra_scripts %}
+  <!-- SweetAlert2 -->
+  <script src="{% static_theme 'plugins/sweetalert2/sweetalert2.min.js' %}"></script>
+  <!-- Toastr -->
+  <script src="{% static_theme 'plugins/toastr/toastr.min.js' %}"></script>
+  {{ block.super }}
+  <script>
+    // Action delete
+    $('.delete-ajax').click(function () {
+      let url = $(this).data('url');
+
+      $('#modal-base').modal('show');
+      $('#modal-overlay').prop('hidden', false);
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+          $('#modal-title').html(data.title);
+          $('#modal-body').html(data.message);
+          $('#modal-type').removeClass().addClass('modal-dialog modal-xl');
+          $('#modal-footer').html(`
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+              <i class="fas fa-times"></i> Cancel</button>
+            <button type="button" data-url="${url}" class="btn btn-danger" id="delete-confirm">
+              <i class="fas fa-trash"></i> Delete</button>
+          `);
+          $('#modal-overlay').prop('hidden', true);
+        }
+      });
+    });
+    $(document).on('click', '#delete-confirm', function () {
+      let url = $(this).data('url');
+      let Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+      });
+
+      $('#modal-overlay').prop('hidden', false);
+      $('#modal-base').modal('hide');
+
+      $.ajax({
+        url: url,
+        type: 'POST',
+        dataType: 'json',
+        data: {
+          csrfmiddlewaretoken: '{{ csrf_token }}',
+          action: 'delete'
+        },
+        success: function (data) {
+          $('#modal-overlay').prop('hidden', true);
+          Toast.fire({
+            icon: 'success',
+            title: data.message,
+          });
+          setTimeout(function () {
+            window.location.reload();
+          }, 1000);
+        },
+        error: function (data) {
+          console.log(data);
+          $('#modal-overlay').prop('hidden', true);
+          Toast.fire({
+            icon: 'error',
+            title: data.message,
+          })
+        }
+      });
+    });
+
+    // Action Detail
+    $('.detail-ajax').click(function () {
+      let url = $(this).data('url');
+
+      $('#modal-base').modal('show');
+      $('#modal-overlay').prop('hidden', false);
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        success: function (data) {
+          $('#modal-title').html('Detail');
+          $('#modal-body').empty().append(data);
+          $('#modal-type').removeClass().addClass('modal-dialog modal-xl');
+          $('#modal-footer').html(`
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+              <i class="fas fa-times"></i> Close</button>
+          `);
+          $('#modal-overlay').prop('hidden', true);
+        }
+      });
+    });
+  </script>
+{% endblock extra_scripts %}
