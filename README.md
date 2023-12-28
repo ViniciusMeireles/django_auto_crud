@@ -15,18 +15,32 @@ git clone https://github.com/ViniciusMeireles/django_adminlte.git
 ```
 
 2. Copy the "django_adminlte" folder to the root directory of your Django project.
-3. In your Django settings, add 'django_adminlte' to the INSTALLED_APPS:
+3. Install [crispy-forms](https://pypi.org/project/crispy-bootstrap4/) for bootstrap 4 and append it to INSTALLED_APPS in your Django settings:
+
+```python
+INSTALLED_APPS = [
+    ...
+    'crispy_forms',
+    'crispy_bootstrap4',
+    ...
+]
+```
+
+4. In your Django settings, add 'django_adminlte' to the INSTALLED_APPS:
 
 ```python
 # settings.py
 
 INSTALLED_APPS = [
+    ...
+    'crispy_forms',
+    'crispy_bootstrap4',
     # ... other installed apps
     'django_adminlte',
 ]
 ```
 
-4. Add all the apps from your project to the LOCAL_APPS list and append it to INSTALLED_APPS, as shown in the example below:
+5. Add all the apps from your project to the LOCAL_APPS list and append it to INSTALLED_APPS, as shown in the example below:
 
 ```python
 # settings.py
@@ -45,7 +59,7 @@ LOCAL_APPS = [
 INSTALLED_APPS += LOCAL_APPS
 ``` 
 
-5. Next, set the path name for the home page. For example, 'home' or 'myapp:home':
+6. Next, set the path name for the home page. For example, 'home' or 'myapp:home':
 
 ```python
 # settings.py
@@ -53,7 +67,7 @@ INSTALLED_APPS += LOCAL_APPS
 HOME_PATH_NAME = 'myapp:home'  # Replace 'myapp:home' with your desired home page path
 ```
 
-6. Here are some other optional configurations you may want to consider:
+7. Here are some other optional configurations you may want to consider:
 
 ```python
 # settings.py
