@@ -11,7 +11,7 @@ from django.views.generic import CreateView as BaseCreateView, UpdateView as Bas
 from django.views.generic.base import ContextMixin
 from django.views.generic.edit import ModelFormMixin as BaseModelFormMixin
 
-from django_adminlte.utils.views import get_home_url, get_verbose_name, get_model_detail_view_url, \
+from django_auto_crud.utils.views import get_home_url, get_verbose_name, get_model_detail_view_url, \
     get_verbose_name_plural, \
     get_model_list_view_url, get_model_update_view_url, get_model_delete_view_url, get_model_create_view_url, \
     get_template_path

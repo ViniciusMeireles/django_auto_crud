@@ -4,7 +4,7 @@ from typing import List, Optional
 from django.db.models import Model
 from django.urls import path
 
-from django_adminlte import views
+from django_auto_crud import views
 
 
 def generate_crud_templates(

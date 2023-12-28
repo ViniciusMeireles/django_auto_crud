@@ -1,20 +1,20 @@
 
-# Django AdminLTE
+# Django Auto Crud
 
-Django AdminLTE is a library that simplifies the development of systems in Django by utilizing the AdminLTE theme to customize generic views such as CreateView, UpdateView, DeleteView, DetailView, and ListView.
+Django Auto Crud is a library that simplifies the development of systems in Django by utilizing the AdminLTE theme to customize generic views such as CreateView, UpdateView, DeleteView, DetailView, and ListView.
 
 
 ## Install
 
-Currently, Django AdminLTE is in the early stages of development and is not available on PyPI for installation via pip. However, you can follow the steps below to incorporate the library into your project:
+Currently, Django Auto Crud is in the early stages of development and is not available on PyPI for installation via pip. However, you can follow the steps below to incorporate the library into your project:
 
 1. Clone this repository to the desired directory on your system:
 
 ```bash
-git clone https://github.com/ViniciusMeireles/django_adminlte.git
+git clone https://github.com/ViniciusMeireles/django_auto_crud.git
 ```
 
-2. Copy the "django_adminlte" folder to the root directory of your Django project.
+2. Copy the "django_auto_crud" folder to the root directory of your Django project.
 3. Install [crispy-forms](https://pypi.org/project/crispy-bootstrap4/) for bootstrap 4 and append it to INSTALLED_APPS in your Django settings:
 
 ```python
@@ -26,7 +26,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-4. In your Django settings, add 'django_adminlte' to the INSTALLED_APPS:
+4. In your Django settings, add 'django_auto_crud' to the INSTALLED_APPS:
 
 ```python
 # settings.py
@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     # ... other installed apps
-    'django_adminlte',
+    'django_auto_crud',
 ]
 ```
 
@@ -47,7 +47,7 @@ INSTALLED_APPS = [
 
 INSTALLED_APPS = [
     # ... other installed apps
-    'django_adminlte',
+    'django_auto_crud',
 ]
 
 LOCAL_APPS = [
@@ -72,27 +72,27 @@ HOME_PATH_NAME = 'myapp:home'  # Replace 'myapp:home' with your desired home pag
 ```python
 # settings.py
 
-# Django AdminLTE Optional Settings
+# Django Auto Crud Optional Settings
 # The language for the site.
 LANGUAGE_SITE = 'en'
 # Directory where the theme is located.
-STATIC_THEME = 'django_adminlte/adminlte_3_2_0/'
+STATIC_THEME = 'django_auto_crud/adminlte_3_2_0/'
 # Directory where the logo is located.
-STATIC_LOGO = 'django_adminlte/images/Django AdminLTE Logo.png'
+STATIC_LOGO = 'django_auto_crud/images/Django Auto Crud Logo.png'
 # Directory where the favicon is located.
-STATIC_FAVICON = 'django_adminlte/images/favicon.webp'
+STATIC_FAVICON = 'django_auto_crud/images/favicon.webp'
 # Name of the site.
-SITE_NAME = "Django AdminLTE"
+SITE_NAME = "Django Auto Crud"
 # Directories where each template is located.
 TEMPLATE_PATHS = {
-    'base': 'django_adminlte/theme/base.html',
-    'list': 'django_adminlte/crud/list.html',
-    'create': 'django_adminlte/crud/create.html',
-    'detail': 'django_adminlte/crud/detail.html',
-    'detail_ajax': 'django_adminlte/crud/detail_ajax.html',
-    'update': 'django_adminlte/crud/update.html',
-    'delete': 'django_adminlte/crud/delete.html',
-    'form': 'django_adminlte/crud/form.html',
+    'base': 'django_auto_crud/theme/base.html',
+    'list': 'django_auto_crud/crud/list.html',
+    'create': 'django_auto_crud/crud/create.html',
+    'detail': 'django_auto_crud/crud/detail.html',
+    'detail_ajax': 'django_auto_crud/crud/detail_ajax.html',
+    'update': 'django_auto_crud/crud/update.html',
+    'delete': 'django_auto_crud/crud/delete.html',
+    'form': 'django_auto_crud/crud/form.html',
     'navbar_left': None,
     'navbar_right': None,
     'sidebar_itens': None,
@@ -153,7 +153,7 @@ python manage.py migrate
 
 from django.shortcuts import render
 
-from django_adminlte.utils.views import get_template_path
+from django_auto_crud.utils.views import get_template_path
 
 
 def home(request):
@@ -165,7 +165,7 @@ def home(request):
 ```python
 from django.urls import path
 
-from django_adminlte.utils.urls import generate_crud_urlpatterns
+from django_auto_crud.utils.urls import generate_crud_urlpatterns
 from . import views
 from .models import Person
 

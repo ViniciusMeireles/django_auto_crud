@@ -1,4 +1,4 @@
-{% load django_adminlte_tags %}
+{% load django_auto_crud_tags %}
 {% load static %}
 {% load tz %}
 <!DOCTYPE html>
@@ -50,14 +50,14 @@
          {% if site_title %}
             alt="{{ site_title }} Logo"
          {% else %}
-            alt="Django AdminLTE Logo"
+            alt="Django Auto Crud Logo"
           {% endif %}
          height="60"
          width="60"
     >
   </div>
 
-  {% include 'django_adminlte/theme/navbar.html' %}
+  {% include 'django_auto_crud/theme/navbar.html' %}
 
   <!-- Main Sidebar Container -->
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -69,7 +69,7 @@
            {% if site_title %}
              alt="{{ site_title }} Logo"
            {% else %}
-             alt="Django AdminLTE Logo"
+             alt="Django Auto Crud Logo"
            {% endif %}
            class="brand-image img-circle elevation-3"
            style="opacity: .8"
@@ -78,19 +78,19 @@
         {% if site_title %}
           {{ site_title }}
         {% else %}
-          Django AdminLTE 3
+          Django Auto Crud
         {% endif %}
       </span>
     </a>
 
-    {% include 'django_adminlte/theme/sidebar.html' %}
+    {% include 'django_auto_crud/theme/sidebar.html' %}
 
   </aside>
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
 
-    {% include 'django_adminlte/theme/content_header.html' %}
+    {% include 'django_auto_crud/theme/content_header.html' %}
 
     <!-- Main content -->
     <section class="content">
@@ -182,8 +182,8 @@
 <script src="{% static_theme 'plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static_theme 'dist/js/adminlte.js' %}"></script>
-<!-- Django AdminLTE  -->
-<script src="{% static 'django_adminlte/js/django_adminlte.js' %}"></script>
+<!-- Django Auto Crud  -->
+<script src="{% static 'django_auto_crud/js/django_auto_crud.js' %}"></script>
 
 {% block extra_scripts %}
 {% endblock extra_scripts %}

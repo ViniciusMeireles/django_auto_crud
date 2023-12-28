@@ -11,8 +11,8 @@ from django.urls import reverse_lazy, resolve, URLPattern
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy
 
-from django_adminlte.utils.views import (get_model_detail_view_url, get_model_update_view_url,
-                                         get_model_delete_view_url, get_verbose_name, get_verbose_name_plural)
+from django_auto_crud.utils.views import (get_model_detail_view_url, get_model_update_view_url,
+                                          get_model_delete_view_url, get_verbose_name, get_verbose_name_plural)
 
 register = template.Library()
 
@@ -261,7 +261,7 @@ def static_theme(parser, token):
             static_theme_path += '/'
         path.var = static_theme_path + path.var
     except AttributeError:
-        path.var = 'django_adminlte/adminlte_3_2_0/' + path.var
+        path.var = 'django_auto_crud/adminlte_3_2_0/' + path.var
 
     if len(bits) >= 2 and bits[-2] == "as":
         varname = bits[3]
@@ -280,7 +280,7 @@ def static_logo(*args):
     :return: Static logo.
     """
     parser = args[0]
-    bit_default = "'django_adminlte/images/Django AdminLTE Logo.png'"
+    bit_default = "'django_auto_crud/images/Django Auto Crud Logo.png'"
 
     try:
         bit = "'" + str(os.path.join(settings.STATIC_LOGO)) + "'"
@@ -301,7 +301,7 @@ def static_favicon(*args):
     :return: Static favicon.
     """
     parser = args[0]
-    bit_default = "'django_adminlte/images/favicon.webp'"
+    bit_default = "'django_auto_crud/images/favicon.webp'"
 
     try:
         bit = "'" + str(os.path.join(settings.STATIC_FAVICON)) + "'"

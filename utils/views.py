@@ -127,14 +127,14 @@ def get_template_path(template: str) -> str | None:
         return settings.TEMPLATE_PATHS[template]
     except (AttributeError, KeyError):
         return {
-            'base': 'django_adminlte/theme/base.html',
-            'list': 'django_adminlte/crud/list.html',
-            'create': 'django_adminlte/crud/create.html',
-            'detail': 'django_adminlte/crud/detail.html',
-            'detail_ajax': 'django_adminlte/crud/detail_ajax.html',
-            'update': 'django_adminlte/crud/update.html',
-            'delete': 'django_adminlte/crud/delete.html',
-            'form': 'django_adminlte/crud/form.html',
+            'base': 'django_auto_crud/theme/base.html',
+            'list': 'django_auto_crud/crud/list.html',
+            'create': 'django_auto_crud/crud/create.html',
+            'detail': 'django_auto_crud/crud/detail.html',
+            'detail_ajax': 'django_auto_crud/crud/detail_ajax.html',
+            'update': 'django_auto_crud/crud/update.html',
+            'delete': 'django_auto_crud/crud/delete.html',
+            'form': 'django_auto_crud/crud/form.html',
             'navbar_left': None,
             'navbar_right': None,
             'sidebar_itens': None,
