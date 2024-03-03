@@ -18,17 +18,17 @@ register = template.Library()
 
 
 @register.simple_tag
-def create_breadcrumbs(breadcrumbs_dict: dict, actual_path: str = None) -> str:
+def create_breadcrumbs(breadcrumbs_dict: dict, current_path: str = None) -> str:
     """
     Create breadcrumbs from dictionary.
 
     :param breadcrumbs_dict: dictionary with breadcrumbs.
-    :param actual_path: actual path.
+    :param current_path: current path.
     :return: breadcrumbs html.
     """
     breadcrumbs = ['']
     for key, value in breadcrumbs_dict.items():
-        if actual_path and actual_path == str(gettext_lazy(value)):
+        if current_path and current_path == str(gettext_lazy(value)):
             breadcrumb_item = f'<li class="breadcrumb-item active">{key}</li>'
         else:
             breadcrumb_item = f'<li class="breadcrumb-item"><a href="{value}">{key}</a></li>'
@@ -37,17 +37,17 @@ def create_breadcrumbs(breadcrumbs_dict: dict, actual_path: str = None) -> str:
 
 
 @register.simple_tag
-def create_left_navbar(left_navbar_links_dict: dict, actual_path: str = None) -> str:
+def create_left_navbar(left_navbar_links_dict: dict, current_path: str = None) -> str:
     """
     Create left navbar from dictionary.
 
     :param left_navbar_links_dict: dictionary with navbar.
-    :param actual_path: actual path.
+    :param current_path: current path.
     :return: navbar html.
     """
     navbar = ['']
     for key, value in left_navbar_links_dict.items():
-        if value == actual_path:
+        if value == current_path:
             navbar_item = (f'<li class="nav-item d-none d-sm-inline-block">'
                            f'<a href="#" class="nav-link active">{key}</a></li>')
         else:
@@ -67,24 +67,34 @@ def create_details_object_fields(obj: Model, fields: Optional[Union[str, List[st
     :return: object details html.
     """
     details = ['']
+    # If fields is None or '__all__' get all fields
     if not fields or fields == '__all__':
         fields = [field.name for field in obj._meta.get_fields()]
     elif not isinstance(fields, list):
         raise TypeError('fields must be a list of strings or "__all__"')
 
+    # Create detail item for each field in fields list
     for field in fields:
+        # Verify if object has a get_{field} method
         if hasattr(obj, f'get_{field}'):
+            # Get value from get_{field} method
             field_value = getattr(obj, f'get_{field}')()
         else:
+            # Get value from field
             field_value = getattr(obj, field)
+        # Get field verbose name
         field_name = obj._meta.get_field(field).verbose_name
+        # Create detail item
         details_item = (
             f'<li class="item"><div class="item-info">'
             f'<a href="javascript:void(0)" class="product-title">{field_name}</a>'
             f'<p>{field_value}</p></div></li>'
             f'<!-- /.item -->'
         )
+        # Append detail item to details list
         details.append(details_item)
+
+    # Return details list as html
     return format_html(''.join(details))
 
 
@@ -97,13 +107,13 @@ def create_header_table(
         actions: Optional[List[str]] = None
 ) -> str:
     """
-    Create header table html.
+    Create header table html for list view of a model.
 
     :param model: Model.
-    :param fields: list of fields.
-    :param sort: Sort field.
-    :param order: Order.
-    :param actions: list of actions.
+    :param fields: list of fields, '__all__' to get all fields.
+    :param sort: Sort field name.
+    :param order: Order of sort, 'asc' or 'desc'.
+    :param actions: list of actions, 'detail', 'update', 'delete'.
     :return: header table html.
     """
     header = ['']
@@ -112,8 +122,11 @@ def create_header_table(
     elif not isinstance(fields, list):
         raise TypeError('fields must be a list of strings or "__all__"')
 
+    # Create header item for each field in fields list
     for field in fields:
+        # Get field verbose name
         field_name = model._meta.get_field(field).verbose_name
+        # Create header item with sort and order
         if sort == field and order == 'asc':
             header_item = (
                 f'<th><a href="?sort={field}&order=desc">'
@@ -136,33 +149,39 @@ def create_header_table(
             )
         header.append(header_item)
 
+    # Add actions header item
     if actions:
         header_item = '<th>Actions</th>'
         header.append(header_item)
 
+    # Return header list as html
     return format_html(''.join(header))
 
 
 def get_column_actions(obj: Model, actions: Optional[dict] = None) -> str:
     """
-    Get column actions.
+    Get actions column for row in table of list view of a model. Detail, update, delete.
 
     :param obj: object.
-    :param actions: list of actions.
+    :param actions: actions dictionary. {'detail': 'path_name', 'update': 'path_name', 'delete': 'path_name'}
     :return: column actions html.
     """
     if not actions:
         return ''
 
+    # Add opening tag for actions column
     column_actions = ['<td class="text-center">']
+    # Create action button for each action in actions dictionary
     for action, path_name in actions.items():
         button_action = None
+
         if action == 'detail' or action == 'detail_ajax':
-            # Object details button
+            # Get URL for object detail view
             if path_name:
                 url = reverse_lazy(path_name, kwargs={'pk': obj.pk})
             else:
                 url = get_model_detail_view_url(obj.__class__, obj.pk)
+            # If action is detail_ajax create ajax button
             if action == 'detail':
                 button_action = (
                     f'<a href="{url}" class="btn btn-info btn-sm m-1"><i class="fas fa-eye"></i></a>'
@@ -172,20 +191,22 @@ def get_column_actions(obj: Model, actions: Optional[dict] = None) -> str:
                     f'<a data-url="{url}" class="btn btn-info btn-sm m-1 detail-ajax"><i class="fas fa-eye"></i></a>'
                 )
         elif action == 'update':
-            # Object update button
+            # Get URL for object update view
             if path_name:
                 url = reverse_lazy(path_name, kwargs={'pk': obj.pk})
             else:
                 url = get_model_update_view_url(obj.__class__, obj.pk)
+            # Button for object update
             button_action = (
                 f'<a href="{url}" class="btn btn-warning btn-sm m-1"><i class="fas fa-edit"></i></a>'
             )
         elif action == 'delete' or action == 'delete_ajax':
-            # Object delete button
+            # Get URL for object delete view
             if path_name:
                 url = reverse_lazy(path_name, kwargs={'pk': obj.pk})
             else:
                 url = get_model_delete_view_url(model=obj.__class__, pk=obj.pk)
+            # If action is delete_ajax create ajax button
             if action == 'delete':
                 button_action = (
                     f'<a href="{url}" class="btn btn-danger btn-sm m-1"><i class="fas fa-trash"></i></a>'
@@ -195,9 +216,14 @@ def get_column_actions(obj: Model, actions: Optional[dict] = None) -> str:
                     f'<a data-url="{url}" class="btn btn-danger btn-sm m-1 delete-ajax">'
                     f'<i class="fas fa-trash"></i></a>'
                 )
+
+        # Append button action to column actions
         if button_action:
             column_actions.append(button_action)
+
+    # Add closing tag for actions column
     column_actions.append('</td>')
+    # Return column actions as html
     return ''.join(column_actions)
 
 
@@ -208,44 +234,57 @@ def create_body_table(
         actions: Optional[dict] = None
 ) -> str:
     """
-    Create body table html.
+    Create table body html. Rows and columns for list view of a model.
 
     :param objects: list of objects.
-    :param fields: list of fields.
-    :param actions: list of actions.
+    :param fields: list of fields. '__all__' to get all fields.
+    :param actions: list of actions. 'detail', 'update', 'delete'.
     :return: body table html.
     """
     body = ['']
     if not objects:
+        # If objects is empty create a row with no data available
         body.append('<tr><td colspan="100%">No data available</td></tr>')
     else:
+        # If fields is None or '__all__' get all fields
         if not fields or fields == '__all__':
             fields = [field.name for field in objects[0]._meta.get_fields()]
         elif not isinstance(fields, list):
             raise TypeError('fields must be a list of strings or "__all__"')
 
+    # Create row for each object in objects list
     for obj in objects:
-        # Rows
+        # Add opening tag for row
         body_item = ['<tr>']
+        # Create column for each field in fields list
         for field in fields:
-            # Columns
             if hasattr(obj, f'get_{field}'):
+                # Get value from get_{field} method
                 field_value = getattr(obj, f'get_{field}')()
             else:
+                # Get value from field
                 field_value = getattr(obj, field)
+            # Append column to row
             body_item.append(f'<td>{field_value}</td>')
 
-        # Actions
+        # Append actions column to row
         body_item.append(get_column_actions(obj, actions))
 
+        # Add closing tag for row
         body_item.append('</tr>')
+        # Append row to body
         body_item = ''.join(body_item)
         body.append(body_item)
+
+    # Return body list as html
     return format_html(''.join(body))
 
 
 @register.tag('static_theme')
 def static_theme(parser, token):
+    """
+    Get files for static theme. If STATIC_THEME is not defined, use default theme.
+    """
     bits = token.split_contents()
 
     if len(bits) < 2:
@@ -313,16 +352,16 @@ def static_favicon(*args):
     return StaticNode(path=path)
 
 
-def check_active_item(actual_url: str, model_name: str, crud_names: [List[str]]) -> bool:
+def check_active_item(current_url: str, model_name: str, crud_names: [List[str]]) -> bool:
     """
     Check if item is active.
 
-    :param actual_url: actual url.
+    :param current_url: current url.
     :param model_name: model name.
     :param crud_names: list of crud names.
     :return: True if item is active.
     """
-    match = resolve(actual_url)
+    match = resolve(current_url)
     for crud_name in crud_names:
         if match.url_name == f'{model_name}_{crud_name}':
             return True
@@ -330,11 +369,11 @@ def check_active_item(actual_url: str, model_name: str, crud_names: [List[str]])
 
 
 @register.simple_tag()
-def sidebar_items(actual_url: str) -> str:
+def sidebar_items(current_url: str) -> str:
     """
     Convert urlpatterns to left navbar items.
 
-    :param actual_url: current URL.
+    :param current_url: current URL.
     :return: Left navbar items HTML.
     """
 
@@ -365,11 +404,11 @@ def sidebar_items(actual_url: str) -> str:
         is_active_found = False
 
         for model_name, crud_names in crud_groups.items():
-            active = False if is_active_found else check_active_item(actual_url, model_name, crud_names)
+            active = False if is_active_found else check_active_item(current_url, model_name, crud_names)
 
             if len(crud_names) > 1:
                 left_navbar_links.extend(
-                    create_group_navbar_items(actual_url, app_name, model_name, crud_names, active)
+                    create_group_navbar_items(current_url, app_name, model_name, crud_names, active)
                 )
             elif crud_names[0] not in ['detail', 'update', 'delete']:
                 if crud_names[0] is None:
@@ -422,7 +461,7 @@ def create_navbar_item(url: str, title: str, active: bool) -> str:
 
 
 def create_group_navbar_items(
-        actual_url: str,
+        current_url: str,
         app_name: str,
         model_name: str,
         crud_names: List[str],
@@ -431,7 +470,7 @@ def create_group_navbar_items(
     """
     Creates a group of navbar items for a model with multiple CRUD operations.
 
-    :param actual_url: Current URL.
+    :param current_url: Current URL.
     :param app_name: Name of the Django app.
     :param model_name: Name of the Django model.
     :param crud_names: List of CRUD operation names.
@@ -458,7 +497,7 @@ def create_group_navbar_items(
         valid_crud_names = [crud_name for crud_name in crud_names if crud_name not in ['detail', 'update', 'delete']]
         is_active_found = False
         for crud_name in valid_crud_names:
-            active = False if is_active_found else check_active_item(actual_url, model_name, crud_names)
+            active = False if is_active_found else check_active_item(current_url, model_name, crud_names)
             group_active = group_active or active
             url = reverse_lazy(f'{app_name}:{model_name}_{crud_name}')
             group_navbar_items.append(create_navbar_item(url, crud_name.title(), active))

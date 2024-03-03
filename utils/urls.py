@@ -4,7 +4,11 @@ from typing import List, Optional
 from django.db.models import Model
 from django.urls import path
 
-from django_auto_crud import views
+from django_auto_crud.views.create import create_view_factory
+from django_auto_crud.views.delete import delete_view_factory
+from django_auto_crud.views.detail import detail_view_factory
+from django_auto_crud.views.list import list_view_factory
+from django_auto_crud.views.update import update_view_factory
 
 
 def generate_crud_templates(
@@ -17,22 +21,25 @@ def generate_crud_templates(
         is_delete: bool = True,
 ) -> List[partial]:
     """
-    Generate CRUD template.
+    Generate CRUD template. Generate a list, create, detail, update and delete views for a model.
+    Example return: [path('/', view, name='model_list'), path('/create/', view, name='model_create'), ...]
 
-    :param model: Model.
-    :param path_route: Path.
-    :param is_list: List view.
-    :param is_create: Create view.
-    :param is_detail: Detail view.
-    :param is_update: Update view.
-    :param is_delete: Delete view.
-    :return: CRUD template.
+    :param model: Model class to generate views for it.
+    :param path_route: Path route, default is model name.
+    :param is_list: Has list view.
+    :param is_create: Has creation view.
+    :param is_detail: Has detail view.
+    :param is_update: Has update view.
+    :param is_delete: Has deletion view.
+    :return: CRUD template. List, create, detail, update and delete views in a list of urlpatterns.
     """
+    # Add trailing slash to path_route
     if not path_route.endswith('/'):
         path_route = f'{path_route}/'
 
     url_patterns = []
     if is_list:
+        # Add actions to list view if it is enabled
         actions = {}
         if is_detail:
             actions['detail_ajax'] = None
@@ -43,7 +50,7 @@ def generate_crud_templates(
         url_patterns.append(
             path(
                 route=f'{path_route}',
-                view=views.list_view_factory(
+                view=list_view_factory(
                     model=model,
                     is_button_create=is_create,
                     actions=actions,
@@ -55,7 +62,7 @@ def generate_crud_templates(
         url_patterns.append(
             path(
                 route=f'{path_route}create/',
-                view=views.create_view_factory(
+                view=create_view_factory(
                     model=model,
                     is_button_back=is_list,
                 ).as_view(),
@@ -66,7 +73,7 @@ def generate_crud_templates(
         url_patterns.append(
             path(
                 route=f'{path_route}<int:pk>/',
-                view=views.detail_view_factory(
+                view=detail_view_factory(
                     model=model,
                     is_button_back=is_list,
                     is_button_update=is_update,
@@ -79,7 +86,7 @@ def generate_crud_templates(
         url_patterns.append(
             path(
                 route=f'{path_route}<int:pk>/update/',
-                view=views.update_view_factory(
+                view=update_view_factory(
                     model=model,
                     is_button_back=is_detail or is_list,
                 ).as_view(),
@@ -90,7 +97,7 @@ def generate_crud_templates(
         url_patterns.append(
             path(
                 route=f'{path_route}<int:pk>/delete/',
-                view=views.delete_view_factory(
+                view=delete_view_factory(
                     model=model,
                     is_button_back=is_detail or is_list,
                 ).as_view(),
@@ -102,10 +109,14 @@ def generate_crud_templates(
 
 def generate_crud_urlpatterns(models: List[type[Model]]) -> List[partial]:
     """
-    Generate urlpatterns.
+    Generate urlpatterns. Generate a list, create, detail, update and delete views for a list of models.
+    Exemple return: [
+        path('model1/', view, name='model1_list'), path('model1/create/', view, name='model1_create'), ...
+        path('model2/', view, name='model2_list'), path('model2/create/', view, name='model2_create'), ...
+    ...]
 
-    :param models: Models.
-    :return: urlpatterns.
+    :param models: List of models to generate views for them. [Model1, Model2, ...]
+    :return: urlpatterns. List, create, detail, update and delete views in a list of urlpatterns.
     """
     urlpatterns = []
     for model in models:

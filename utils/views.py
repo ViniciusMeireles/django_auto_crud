@@ -5,13 +5,15 @@ from django.urls import get_resolver, reverse_lazy, reverse
 
 def get_home_url() -> str:
     """
-    Get home URL.
+    Get home URL. It uses HOME_PATH_NAME from settings.py.
 
-    :return: Home URL.
+    :return: Home URL. Default is 'home'.
     """
     try:
         home_path_name = settings.HOME_PATH_NAME
     except AttributeError:
+        # If HOME_PATH_NAME is not defined, use app_name from urls.py or 'home' as default. The urls.py app_name is the
+        # obtained from the ROOT_URLCONF.
         home_path_name = get_resolver().app_name + ':home' if get_resolver().app_name else 'home'
 
     try:
@@ -42,7 +44,7 @@ def get_verbose_name_plural(model: type[Model]) -> str:
 
 def get_model_path_partial_name(model: type[Model]) -> str:
     """
-    Get model path name.
+    Get model path name. Example: 'app_name:model_name'.
 
     :param model: Model.
     :return: Model path name.
@@ -52,7 +54,7 @@ def get_model_path_partial_name(model: type[Model]) -> str:
 
 def get_model_list_view_url(model: type[Model]) -> str:
     """
-    Get model list URL.
+    Get model list URL. Example: URL for path_name 'app_name:model_name_list'.
 
     :param model: Model.
     :return: Model list URL.
@@ -64,7 +66,7 @@ def get_model_list_view_url(model: type[Model]) -> str:
 
 def get_model_create_view_url(model: type[Model]) -> str:
     """
-    Get model create URL.
+    Get model create URL. Example: URL for path_name 'app_name:model_name_create'.
 
     :param model: Model.
     :return: Model create URL.
@@ -76,7 +78,7 @@ def get_model_create_view_url(model: type[Model]) -> str:
 
 def get_model_detail_view_url(model: type[Model], pk: int) -> str:
     """
-    Get model detail URL.
+    Get model detail URL. Example: URL for path_name 'app_name:model_name_detail'.
 
     :param model: Model.
     :param pk: Primary key.
@@ -90,7 +92,7 @@ def get_model_detail_view_url(model: type[Model], pk: int) -> str:
 
 def get_model_update_view_url(model: type[Model], pk: int) -> str:
     """
-    Get model update URL.
+    Get model update URL. Example: URL for path_name 'app_name:model_name_update'.
 
     :param model: Model.
     :param pk: Primary key.
@@ -104,7 +106,7 @@ def get_model_update_view_url(model: type[Model], pk: int) -> str:
 
 def get_model_delete_view_url(model: type[Model], pk: int) -> str:
     """
-    Get model delete URL.
+    Get model delete URL. Example: URL for path_name 'app_name:model_name_delete'.
 
     :param model: Model.
     :param pk: Primary key.
@@ -118,7 +120,7 @@ def get_model_delete_view_url(model: type[Model], pk: int) -> str:
 
 def get_template_path(template: str) -> str | None:
     """
-    Get CRUD template.
+    Get CRUD template. It uses TEMPLATE_PATHS from settings.py. If TEMPLATE_PATHS is not defined, it uses default
 
     :param template: Template name ('base', 'list', 'create', 'detail', 'update', 'delete', 'form').
     :return: CRUD template path.
